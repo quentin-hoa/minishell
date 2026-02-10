@@ -7,6 +7,15 @@
 
 #include "my.h"
 
+static int find_slash(char *command)
+{
+    for (int i = 0; command[i] != '\0'; i++) {
+        if (command[i] == '/')
+            return 1;
+    }
+    return 0;
+}
+
 static void display_env(char **env)
 {
     for (int i= 0; env[i]; i++) {
@@ -66,7 +75,10 @@ int execute_command(char **list_of_args, char **env, int *status)
     char *exe_file;
     pid_t child_pid;
 
-    exe_file = get_exe_path(env, list_of_args[0]);
+    if (find_slash(list_of_args[0]) == 1)
+        exe_file = my_strdup(list_of_args[0]);
+    else
+        exe_file = get_exe_path(env, list_of_args[0]);
     if (!exe_file){
         my_printf("%s: Command not found.\n", list_of_args[0]);
         *status = 1;
