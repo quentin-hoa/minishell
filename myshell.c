@@ -110,6 +110,9 @@ int my_shell(char *line, char **env, int *last_status)
     if (!list_of_args || !line)
         return 84;
     if (my_strcmp(list_of_args[0], "exit") == 0) {
+        if (list_of_args[1]) {
+            *last_status = my_atoi(list_of_args[1]);
+        }
         free_list(list_of_args);
         return -42;
     }

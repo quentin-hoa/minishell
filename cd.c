@@ -33,6 +33,7 @@ int handle_cd_path(char **list_of_args, char **env)
         cd_path = my_strdup(list_of_args[1]);
     if (chdir(cd_path) == -1) {
         perror(cd_path);
+        free(cd_path);
         return -1;
     }
     free(cd_path);

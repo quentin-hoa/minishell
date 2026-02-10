@@ -27,7 +27,7 @@
     char *my_strncpy(char *dest, char const *src, int nb);
     char *my_strcpy(char *dest, char const *src);
     int my_strncmp(char *s1, char  *s2, int n);
-    int my_atoi_c(char c);
+    int my_atoi(char *str);
     int my_strcmp(char *s1, char *s2);
     char *my_strdup(char *str);
     char *get_home_path(char **env);
