@@ -11,7 +11,9 @@ CFLAGS = -I$(INCLUDE_PATH) -g -Wall
 
 NAME = mysh
 
-SRC	= main.c
+SRC	= main.c \
+	cd.c \
+	myshell.c
 
 OBJ = $(SRC:.c=.o)
 

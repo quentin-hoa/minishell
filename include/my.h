@@ -30,4 +30,11 @@
     int my_atoi_c(char c);
     int my_strcmp(char *s1, char *s2);
     char *my_strdup(char *str);
+    char *get_home_path(char **env);
+    int handle_cd_path(char **list_of_args, char **env);
+    int execute_command(char **list_of_args, char **env, int *status);
+    int my_shell(char *line, char **env, int *last_status);
+    int my_strlen(char *str);
+    char *my_strcat(char *dest, char const *src);
+
 #endif
