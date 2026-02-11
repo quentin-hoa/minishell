@@ -45,5 +45,6 @@
     char **init_new_env(char **env);
     int check_var(char *var);
     int modif_var(char *var, char **new_env, char *value);
+    char **handle_unsetenv(char **list_of_args, char **env);
 
 #endif

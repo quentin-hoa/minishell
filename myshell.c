@@ -130,6 +130,17 @@ int my_shell(char *line, char ***env, int *last_status)
         free_list(list_of_args);
         return 0;
     }
+    if (my_strcmp(list_of_args[0], "unsetenv") == 0) {
+        if (!list_of_args[1] || my_strcmp(list_of_args[1], "") == 0) {
+            write(2, "unsetenv: Too few arguments.\n", 30);
+            free(list_of_args);
+            return 0;
+        }
+        old_env = *env;
+        new_env = handle_unsetenv(list_of_args, *env);
+        free_list(list_of_args);
+        return 0;
+    }
     else {
         if (execute_command(list_of_args, *env, &status) == 84) {
             return 84;

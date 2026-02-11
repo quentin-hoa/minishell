@@ -34,5 +34,6 @@ int main(int ac, char **av, char **env)
             return 84;
     }
     free_list(my_env);
+    free(line);
     return last_status;
 }

@@ -91,3 +91,27 @@ int modif_var(char *var, char **new_env, char *value)
     new_env[i + 1] = NULL;
     return 0;
 }
+
+void shift_values(char **env, int j)
+{
+    while (env[j]) {
+        env[j] = env[j + 1];
+        j++;
+    }
+}
+
+char **handle_unsetenv(char **list_of_args, char **env)
+{
+    int j = 0;
+
+    for (int i = 1; list_of_args[i]; i++) {
+        for (j = 0; env[j]; j++) {
+            if (my_strncmp(list_of_args[i], env[j], my_strlen(list_of_args[i])) == 0 && env[j][my_strlen(list_of_args[i])] == '=') {
+                free(env[j]);
+                shift_values(env, j);
+                break;
+            }
+        }
+    }
+    return env;
+}
