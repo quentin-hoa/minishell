@@ -13,7 +13,8 @@ NAME = mysh
 
 SRC	= main.c \
 	cd.c \
-	myshell.c
+	myshell.c \
+	env.c
 
 OBJ = $(SRC:.c=.o)
 

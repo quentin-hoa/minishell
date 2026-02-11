@@ -15,6 +15,7 @@ int main(int ac, char **av, char **env)
     size_t len = 0;
     int return_nb;
     int last_status = 0;
+    char **my_env = init_new_env(env);
 
     if (ac != 1)
         return 84;
@@ -26,11 +27,12 @@ int main(int ac, char **av, char **env)
             line[my_strlen(line) - 1] = '\0';
         if (my_strcmp(line, "") == 0)
             continue;
-        return_nb = my_shell(line, env, &last_status);
+        return_nb = my_shell(line, &my_env, &last_status);
         if (return_nb == -42)
             break;
         if (return_nb == 84)
             return 84;
     }
+    free_list(my_env);
     return last_status;
 }

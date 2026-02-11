@@ -16,14 +16,7 @@ static int find_slash(char *command)
     return 0;
 }
 
-static void display_env(char **env)
-{
-    for (int i= 0; env[i]; i++) {
-        my_printf("%s\n", env[i]);
-    }
-}
-
-static void free_list(char **list_of_args)
+void free_list(char **list_of_args)
 {
     for (int  i = 0; list_of_args[i]; i++) {
         free(list_of_args[i]);
@@ -102,10 +95,12 @@ int execute_command(char **list_of_args, char **env, int *status)
     return 0;
 }
 
-int my_shell(char *line, char **env, int *last_status)
+int my_shell(char *line, char ***env, int *last_status)
 {
     char **list_of_args = word_separator_space(line);
     int status = 0;
+    char **new_env = NULL;
+    char **old_env = NULL;
 
     if (!list_of_args || !line)
         return 84;
@@ -116,21 +111,29 @@ int my_shell(char *line, char **env, int *last_status)
         free_list(list_of_args);
         return -42;
     }
-    if (my_strcmp(list_of_args[0], "env") == 0) {
-        display_env(env);
-        *last_status = 0;
+    if (my_strcmp(list_of_args[0], "env") == 0)
+        return handle_env(*env, last_status, list_of_args);
+    if (my_strcmp(list_of_args[0], "cd") == 0)
+        return cd_func(*env, last_status, list_of_args, &status);
+    if (my_strcmp(list_of_args[0], "setenv") == 0) {
+        if (!list_of_args[1]) {
+            return handle_env(*env, last_status, list_of_args);
+        }
+        old_env = *env;
+        new_env = init_new_env(old_env);
+        if (modif_var(list_of_args[1], new_env, list_of_args[2]) == 0) {
+            *env = new_env;
+            free_list(old_env);
+        } else {
+            free_list(new_env);
+        }
         free_list(list_of_args);
         return 0;
     }
-    if (my_strcmp(list_of_args[0], "cd") == 0) {
-        status = handle_cd_path(list_of_args, env);
-        *last_status = status;
-        free_list(list_of_args);
-        return status;
-    }
     else {
-        if (execute_command(list_of_args, env, &status) == 84)
+        if (execute_command(list_of_args, *env, &status) == 84) {
             return 84;
+        }
     }
     free_list(list_of_args);
     *last_status = status;

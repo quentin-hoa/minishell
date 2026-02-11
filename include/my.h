@@ -33,8 +33,17 @@
     char *get_home_path(char **env);
     int handle_cd_path(char **list_of_args, char **env);
     int execute_command(char **list_of_args, char **env, int *status);
-    int my_shell(char *line, char **env, int *last_status);
+    int my_shell(char *line, char ***env, int *last_status);
     int my_strlen(char *str);
     char *my_strcat(char *dest, char const *src);
+    int cd_func(char **env, int *last_status, char **list_of_args, int *status);
+    void free_list(char **list_of_args);
+    int is_alpha_char(char c);
+    int is_number(char c);
+    void display_env(char **env);
+    int handle_env(char **env, int *last_status, char **list_of_args);
+    char **init_new_env(char **env);
+    int check_var(char *var);
+    int modif_var(char *var, char **new_env, char *value);
 
 #endif
