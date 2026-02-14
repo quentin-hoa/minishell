@@ -58,58 +58,65 @@ int execute_command(char **list_of_args, char **env, int *status)
     return 0;
 }
 
-int my_shell(char *line, char ***env, int *last_status)
+static int exec_setenv(char **list_of_args, char ***env)
 {
-    char **list_of_args = word_separator_space(line);
-    int status = 0;
-    char **new_env = NULL;
-    char **old_env = NULL;
+    char **new_env;
 
-    if (!list_of_args || !line)
-        return 84;
-    if (my_strcmp(list_of_args[0], "exit") == 0) {
-        if (list_of_args[1]) {
-            *last_status = my_atoi(list_of_args[1]);
-        }
-        free_list(list_of_args);
-        return -42;
+    if (!list_of_args[1])
+        return 1;
+    new_env = init_new_env(*env);
+    if (modif_var(list_of_args[1], new_env, list_of_args[2]) == 0) {
+        free_list(*env);
+        *env = new_env;
+    } else {
+        free_list(new_env);
     }
-    if (my_strcmp(list_of_args[0], "env") == 0)
-        return handle_env(*env, last_status, list_of_args);
-    if (my_strcmp(list_of_args[0], "cd") == 0)
-        return cd_func(*env, last_status, list_of_args, &status);
-    if (my_strcmp(list_of_args[0], "setenv") == 0) {
-        if (!list_of_args[1]) {
-            return handle_env(*env, last_status, list_of_args);
-        }
-        old_env = *env;
-        new_env = init_new_env(old_env);
-        if (modif_var(list_of_args[1], new_env, list_of_args[2]) == 0) {
-            *env = new_env;
-            free_list(old_env);
-        } else {
-            free_list(new_env);
-        }
-        free_list(list_of_args);
-        return 0;
+    return 0;
+}
+
+static int exec_unsetenv(char **list_of_args, char **env)
+{
+    if (!list_of_args[1] || my_strcmp(list_of_args[1], "") == 0) {
+        write(2, "unsetenv: Too few arguments.\n", 30);
+        return 1;
     }
-    if (my_strcmp(list_of_args[0], "unsetenv") == 0) {
-        if (!list_of_args[1] || my_strcmp(list_of_args[1], "") == 0) {
-            write(2, "unsetenv: Too few arguments.\n", 30);
-            free(list_of_args);
-            return 0;
-        }
-        old_env = *env;
-        new_env = handle_unsetenv(list_of_args, *env);
-        free_list(list_of_args);
-        return 0;
+    handle_unsetenv(list_of_args, env);
+    return 0;
+}
+
+static int check_builtin_commands(char **args, char ***env, int *last_status)
+{
+    int status = 0;
+
+    if (my_strcmp(args[0], "setenv") == 0) {
+        if (exec_setenv(args, env) == 1)
+            return handle_env(*env, last_status, args);
+    } else if (my_strcmp(args[0], "unsetenv") == 0) {
+        exec_unsetenv(args, *env);
+    } else {
+        execute_command(args, *env, &status);
     }
-    else {
-        if (execute_command(list_of_args, *env, &status) == 84) {
-            return 84;
-        }
-    }
-    free_list(list_of_args);
+    free_list(args);
     *last_status = status;
     return 0;
+}
+
+int my_shell(char *line, char ***env, int *last_status)
+{
+    char **args = word_separator_space(line);
+    int status = 0;
+
+    if (!args || !line)
+        return 84;
+    if (my_strcmp(args[0], "exit") == 0) {
+        if (args[1])
+            *last_status = my_atoi(args[1]);
+        free_list(args);
+        return -42;
+    }
+    if (my_strcmp(args[0], "env") == 0)
+        return handle_env(*env, last_status, args);
+    if (my_strcmp(args[0], "cd") == 0)
+        return cd_func(*env, last_status, args, &status);
+    return check_builtin_commands(args, env, last_status);
 }
