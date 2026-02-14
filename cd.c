@@ -13,7 +13,7 @@ char *get_home_path(char **env)
 
     for (int i = 0; env[i]; i++) {
         if (my_strncmp(env[i], "HOME=", 5) == 0) {
-            local_path =  my_strdup(env[i] + 5);
+        local_path =  my_strdup(env[i] + 5);
             if (!local_path)
                 return NULL;
             else

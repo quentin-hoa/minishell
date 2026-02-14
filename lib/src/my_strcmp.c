@@ -17,7 +17,7 @@ int my_strcmp(char *s1, char *s2)
     return (s1[i] - s2[i]);
 }
 
-int my_strncmp(char *s1, char  *s2, int n)
+int my_strncmp(char *s1, char *s2, int n)
 {
     int i = 0;
 

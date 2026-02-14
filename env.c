@@ -7,23 +7,6 @@
 
 #include "my.h"
 
-int count_lines_env(char **env)
-{
-    int lines = 0;
-
-    for(int i = 0; env[i]; i++) {
-        lines++;
-    }
-    return lines;
-}
-
-void display_env(char **env)
-{
-    for (int i= 0; env[i]; i++) {
-        my_printf("%s\n", env[i]);
-    }
-}
-
 int handle_env(char **env, int *last_status, char **list_of_args)
 {
     display_env(env);
@@ -48,40 +31,32 @@ char **init_new_env(char **env)
     return new_env;
 }
 
-int check_var(char *var)
+static char *make_path(char *temp, char *var, char *value)
 {
-    if (!((var[0] >= 'a' && var[0] <= 'z') || (var[0] >= 'A' && var[0] <= 'Z'))) {
-        write(2, "setenv: Variable name must begin with a letter.\n", 48);
-        return 84;
-    }
-    for (int i = 0; var[i] != '\0'; i++) {
-        if (!((var[i] >= 'a' && var[i] <= 'z') || 
-              (var[i] >= 'A' && var[i] <= 'Z') || 
-              (var[i] >= '0' && var[i] <= '9') || 
-              (var[i] == '_'))) {
-            write(2, "setenv: Variable name must contain alphanumeric characters.\n", 60);
-            return 84;
-        }
-    }
-    return 0;
+    int val_len = (value) ? my_strlen(value) : 0;
+
+    temp = malloc(my_strlen(var) + val_len + 2);
+    if (!temp)
+        return NULL;
+    my_strcpy(temp, var);
+    my_strcat(temp, "=");
+    my_strcat(temp, (value) ? value : "");
+    return temp;
 }
 
-int modif_var(char *var, char **new_env, char *value) 
+int modif_var(char *var, char **new_env, char *value)
 {
     int i = 0;
-    int val_len = (value) ? my_strlen(value) : 0;
     char *temp;
 
     if (check_var(var) == 84)
         return 84;
-    temp = malloc(my_strlen(var) + val_len + 2);
+    temp = make_path(temp, var, value);
     if (!temp)
         return 84;
-    my_strcpy(temp, var);
-    my_strcat(temp, "=");
-    my_strcat(temp, (value) ? value : "");
     for (;new_env[i]; i++) {
-        if (my_strncmp(var, new_env[i], my_strlen(var)) == 0 && new_env[i][my_strlen(var)] == '=') {
+        if (my_strncmp(var, new_env[i], my_strlen(var)) == 0
+            && new_env[i][my_strlen(var)] == '=') {
             free(new_env[i]);
             new_env[i] = temp;
             return 0;
@@ -92,21 +67,15 @@ int modif_var(char *var, char **new_env, char *value)
     return 0;
 }
 
-void shift_values(char **env, int j)
-{
-    while (env[j]) {
-        env[j] = env[j + 1];
-        j++;
-    }
-}
-
 char **handle_unsetenv(char **list_of_args, char **env)
 {
     int j = 0;
 
     for (int i = 1; list_of_args[i]; i++) {
         for (j = 0; env[j]; j++) {
-            if (my_strncmp(list_of_args[i], env[j], my_strlen(list_of_args[i])) == 0 && env[j][my_strlen(list_of_args[i])] == '=') {
+            if (my_strncmp(list_of_args[i], env[j],
+                my_strlen(list_of_args[i])) == 0
+                && env[j][my_strlen(list_of_args[i])] == '=') {
                 free(env[j]);
                 shift_values(env, j);
                 break;

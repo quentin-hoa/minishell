@@ -14,7 +14,9 @@ NAME = mysh
 SRC	= main.c \
 	cd.c \
 	myshell.c \
-	env.c
+	env.c \
+	utils.c \
+	path.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -30,6 +32,7 @@ push: fclean
 clean:
 	rm -f $(OBJ)
 fclean: clean
+	make fclean -C ./lib
 	rm -f $(NAME)
 
 re: fclean all

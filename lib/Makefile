@@ -36,8 +36,6 @@ SRC	= src/my_0.c \
 	src/my_strcmp.c \
 	src/my_strcpy.c \
 	src/my_str_to_word_array.c \
-	src/my_strtok.c \
-	src/sort_by_alpha.c \
 	src/my_to_lower.c \
 	src/word_separator_space.c
 
