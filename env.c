@@ -54,7 +54,7 @@ int modif_var(char *var, char **new_env, char *value)
     temp = make_path(temp, var, value);
     if (!temp)
         return 84;
-    for (;new_env[i]; i++) {
+    for (; new_env[i]; i++) {
         if (my_strncmp(var, new_env[i], my_strlen(var)) == 0
             && new_env[i][my_strlen(var)] == '=') {
             free(new_env[i]);
@@ -67,20 +67,26 @@ int modif_var(char *var, char **new_env, char *value)
     return 0;
 }
 
-char **handle_unsetenv(char **list_of_args, char **env)
+static void find_and_remove(char *var_to_remove, char **env)
 {
     int j = 0;
+    int len = my_strlen(var_to_remove);
 
-    for (int i = 1; list_of_args[i]; i++) {
-        for (j = 0; env[j]; j++) {
-            if (my_strncmp(list_of_args[i], env[j],
-                my_strlen(list_of_args[i])) == 0
-                && env[j][my_strlen(list_of_args[i])] == '=') {
-                free(env[j]);
-                shift_values(env, j);
-                break;
-            }
+    while (env[j]) {
+        if (my_strncmp(var_to_remove, env[j], len) == 0
+            && env[j][len] == '=') {
+            free(env[j]);
+            shift_values(env, j);
+        } else {
+            j++;
         }
+    }
+}
+
+char **handle_unsetenv(char **list_of_args, char **env)
+{
+    for (int i = 1; list_of_args[i]; i++) {
+        find_and_remove(list_of_args[i], env);
     }
     return env;
 }

@@ -10,6 +10,7 @@
 int check_var(char *var)
 {
     char *e = "setenv: Variable name must contain alphanumeric characters.\n";
+
     if (!((var[0] >= 'a' && var[0] <= 'z')
         || (var[0] >= 'A' && var[0] <= 'Z'))) {
         write(2, "setenv: Variable name must begin with a letter.\n", 48);
@@ -17,9 +18,9 @@ int check_var(char *var)
     }
     for (int i = 0; var[i] != '\0'; i++) {
         if (!((var[i] >= 'a' && var[i] <= 'z') ||
-              (var[i] >= 'A' && var[i] <= 'Z') ||
-              (var[i] >= '0' && var[i] <= '9') ||
-              (var[i] == '_'))) {
+            (var[i] >= 'A' && var[i] <= 'Z') ||
+            (var[i] >= '0' && var[i] <= '9') ||
+            (var[i] == '_'))) {
             write(2, e, 60);
             return 84;
         }
@@ -47,7 +48,7 @@ int count_lines_env(char **env)
 
 void display_env(char **env)
 {
-    for (int i= 0; env[i]; i++) {
+    for (int i = 0; env[i]; i++) {
         my_printf("%s\n", env[i]);
     }
 }

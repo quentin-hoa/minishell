@@ -20,7 +20,7 @@ static int find_slash(char *command)
 
 void free_list(char **list_of_args)
 {
-    for (int  i = 0; list_of_args[i]; i++) {
+    for (int i = 0; list_of_args[i]; i++) {
         free(list_of_args[i]);
     }
     free(list_of_args);
