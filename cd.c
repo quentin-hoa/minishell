@@ -22,7 +22,7 @@ char *get_home_path(char **env)
     for (int i = 0; env[i]; i++) {
         if (my_strncmp(env[i], "HOME=", 5) == 0) {
             local_path = my_strdup(env[i] + 5);
-            return_path(local_path);
+            return return_path(local_path);
         }
     }
     return NULL;
@@ -38,13 +38,14 @@ static int make_chdir(char *cd_path)
     return 0;
 }
 
-int handle_cd_path(char **list_of_args, char **env)
+int handle_cd_path(char **list_of_args, char ***env)
 {
     char *cd_path;
+    char **new_env = init_new_env(*env);
 
     if (!list_of_args[1])
-        cd_path = get_home_path(env);
-    if (list_of_args[2]) {
+        cd_path = get_home_path(*env);
+    else if (list_of_args[2]) {
         write(2, "cd: to many arguments.\n", 24);
         return 1;
     } else
@@ -53,13 +54,16 @@ int handle_cd_path(char **list_of_args, char **env)
         write(2, "cd: No home directory.\n", 24);
         return 1;
     }
+    modif_var("OLDPWD", new_env, getcwd(NULL, 0));
     if (make_chdir(cd_path) == 1)
         return 1;
+    modif_var("PWD", new_env, getcwd(NULL, 0));
     free(cd_path);
+    *env = new_env;
     return 0;
 }
 
-int cd_func(char **env, int *last_status, char **list_of_args, int *status)
+int cd_func(char ***env, int *last_status, char **list_of_args, int *status)
 {
     *status = handle_cd_path(list_of_args, env);
     *last_status = *status;

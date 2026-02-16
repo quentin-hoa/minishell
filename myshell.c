@@ -117,6 +117,6 @@ int my_shell(char *line, char ***env, int *last_status)
     if (my_strcmp(args[0], "env") == 0)
         return handle_env(*env, last_status, args);
     if (my_strcmp(args[0], "cd") == 0)
-        return cd_func(*env, last_status, args, &status);
+        return cd_func(env, last_status, args, &status);
     return check_builtin_commands(args, env, last_status);
 }
