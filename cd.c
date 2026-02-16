@@ -48,8 +48,13 @@ int handle_cd_path(char **list_of_args, char ***env)
     else if (list_of_args[2]) {
         write(2, "cd: to many arguments.\n", 24);
         return 1;
-    } else
+    } else {
         cd_path = my_strdup(list_of_args[1]);
+        if (my_strcmp(cd_path, "-") == 0) {
+            free(cd_path);
+            cd_path = my_strdup("..");
+        }
+    }
     if (!cd_path) {
         write(2, "cd: No home directory.\n", 24);
         return 1;
