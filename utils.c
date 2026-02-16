@@ -58,7 +58,7 @@ int is_only_space(char *line)
     int count = 0;
 
     for (int i = 0; line[i] != '\0'; i++) {
-        if (line[i] == ' ')
+        if (line[i] == ' ' || line[i] == '\t')
             count++;
     }
     if (count == my_strlen(line))
