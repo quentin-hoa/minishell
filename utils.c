@@ -52,3 +52,16 @@ void display_env(char **env)
         my_printf("%s\n", env[i]);
     }
 }
+
+int is_only_space(char *line)
+{
+    int count = 0;
+
+    for (int i = 0; line[i] != '\0'; i++) {
+        if (line[i] == ' ')
+            count++;
+    }
+    if (count == my_strlen(line))
+        return 1;
+    return 0;
+}

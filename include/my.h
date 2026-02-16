@@ -49,5 +49,6 @@ char **handle_unsetenv(char **list_of_args, char **env);
 void shift_values(char **env, int j);
 int count_lines_env(char **env);
 char *get_exe_path(char **env, char *command);
+int is_only_space(char *line);
 
 #endif

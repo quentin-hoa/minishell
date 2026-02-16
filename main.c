@@ -14,6 +14,8 @@ static void process_line(char *line, char ***my_env, int *last_status,
 {
     if (line[my_strlen(line) - 1] == '\n')
         line[my_strlen(line) - 1] = '\0';
+    if (is_only_space(line) == 1)
+        return;
     if (my_strcmp(line, "") == 0)
         return;
     *ret = my_shell(line, my_env, last_status);
