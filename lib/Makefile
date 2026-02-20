@@ -37,7 +37,8 @@ SRC	= src/my_0.c \
 	src/my_strcpy.c \
 	src/my_str_to_word_array.c \
 	src/my_to_lower.c \
-	src/word_separator_space.c
+	src/word_separator_space.c \
+	src/str_to_word_array_delim.c
 
 OBJ = $(SRC:.c=.o)
 

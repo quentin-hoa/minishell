@@ -32,20 +32,10 @@ static char *get_path_from_list(env_t *head)
     return NULL;
 }
 
-char *get_path(char *command, env_t *head)
+static char *search_path(char **dirs, char *command, char *path_env)
 {
-    char *path_env = NULL;
     char *full_path = NULL;
-    char **dirs = NULL;
 
-    if (find_slash(command)) {
-        if (access(command, F_OK) == 0)
-            return my_strdup(command);
-        return NULL;
-    }
-    path_env = get_path_from_list(head);
-    if (!path_env) return NULL;
-    dirs = my_str_to_word_array_delim(path_env, ':');
     for (int i = 0; dirs[i]; i++) {
         full_path = build_path(dirs[i], command);
         if (access(full_path, F_OK) == 0) {
@@ -55,6 +45,28 @@ char *get_path(char *command, env_t *head)
         }
         free(full_path);
     }
-    free_list(dirs); free(path_env);
+    return NULL;
+}
+
+char *get_path(char *command, env_t *head)
+{
+    char *path_env = NULL;
+    char *res = NULL;
+    char **dirs = NULL;
+
+    if (find_slash(command)) {
+        if (access(command, F_OK) == 0)
+            return my_strdup(command);
+        return NULL;
+    }
+    path_env = get_path_from_list(head);
+    if (!path_env)
+        return NULL;
+    dirs = my_str_to_word_array_delim(path_env, ':');
+    res = search_path(dirs, command, path_env);
+    if (res)
+        return res;
+    free_list(dirs);
+    free(path_env);
     return NULL;
 }

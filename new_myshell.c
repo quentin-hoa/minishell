@@ -42,15 +42,20 @@ void my_put_exec_error(char *cmd, int err)
     }
 }
 
+static void check_signals(int status)
+{
+    if (WTERMSIG(status) == SIGSEGV)
+        write(2, "Segmentation fault\n", 19);
+    if (WTERMSIG(status) == SIGFPE)
+        write(2, "Floating exception\n", 19);
+}
+
 void handle_error_status(int status, int *last_status)
 {
     if (WIFEXITED(status)) {
         *last_status = WEXITSTATUS(status);
     } else if (WIFSIGNALED(status)) {
-        if (WTERMSIG(status) == SIGSEGV)
-            write(2, "Segmentation fault\n", 19);
-        if (WTERMSIG(status) == SIGFPE)
-            write(2, "Floating exception\n", 19);
+        check_signals(status);
         *last_status = 128 + WTERMSIG(status);
     }
 }
@@ -62,7 +67,8 @@ int execute_extern_command(char **args, env_t *head)
     pid_t pid = fork();
     int status = 0;
 
-    if (pid == -1) return 1;
+    if (pid == -1)
+        return 1;
     if (pid == 0) {
         if (execve(path, args, env_tab) == -1) {
             my_put_exec_error(args[0], errno);
@@ -73,8 +79,22 @@ int execute_extern_command(char **args, env_t *head)
         handle_error_status(status, &status);
     }
     free_list(env_tab);
-    if (path) free(path);
+    if (path)
+        free(path);
     return status;
+}
+
+static int check_builtins(char **args, env_t **head, int *last_status)
+{
+    int ret = 0;
+
+    for (int i = 0; i < NB_BUILTIN; i++) {
+        if (my_strcmp(args[0], builtins[i].key) == 0) {
+            ret = builtins[i].func(head, args, last_status);
+            return (ret);
+        }
+    }
+    return -1;
 }
 
 int new_shell(char *str, env_t **head, int *last_status)
@@ -84,14 +104,12 @@ int new_shell(char *str, env_t **head, int *last_status)
 
     if (!args || !args[0])
         return 0;
-    for (int i = 0; i < NB_BUILTIN; i++) {
-        if (my_strcmp(args[0], builtins[i].key) == 0) {
-            ret = builtins[i].func(head, args, last_status);
-            if (ret != -42)
-                *last_status = ret;
-            free_list(args);
-            return ret;
-        }
+    ret = check_builtins(args, head, last_status);
+    if (ret != -1) {
+        if (ret != -42)
+            *last_status = ret;
+        free_list(args);
+        return ret;
     }
     *last_status = execute_extern_command(args, *head);
     free_list(args);

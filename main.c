@@ -31,16 +31,15 @@ int shell_loop(env_t *env_list)
     size_t len = 0;
     int last_status = 0;
 
-    while (1) {
-        if (isatty(0))
-            write(1, "$> ", 4);
-        if (getline(&line, &len, stdin) == -1) {
-            if (isatty(0))
-                write(1, "exit\n", 6);
-            break;
-        }
+    if (isatty(0))
+        write(1, "$> ", 3);
+    while (getline(&line, &len, stdin) != -1) {
         handle_line(line, &env_list, &last_status);
+        if (isatty(0))
+            write(1, "$> ", 3);
     }
+    if (isatty(0))
+        write(1, "exit\n", 5);
     free(line);
     return last_status;
 }

@@ -17,6 +17,8 @@ SRC	= main.c \
 	new_path.c \
 	new_env.c \
 	new_myshell.c \
+	unsetenv.c \
+	utils2.c
 
 OBJ = $(SRC:.c=.o)
 

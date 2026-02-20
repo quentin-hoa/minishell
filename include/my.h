@@ -75,7 +75,7 @@ typedef struct builtin_s {
     int (*func)(env_t **head, char **args, int *last_status);
 } builtin_t;
 
-int exit_funct( env_t **head, char **args, int *last_status);
+int exit_funct(env_t **head, char **args, int *last_status);
 void do_unsetenv(env_t **head, char **args, int *last_status);
 int new_shell(char *str, env_t **head, int *last_status);
 int make_chdir(char *cd_path);
