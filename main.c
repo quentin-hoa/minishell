@@ -8,48 +8,52 @@
 #include "my.h"
 #include <dirent.h>
 #include <stddef.h>
+#include <stdlib.h>
 
-static void process_line(char *line, char ***my_env, int *last_status,
-    int *ret)
+static void handle_line(char *line, env_t **env_list, int *last_status)
 {
+    int ret = 0;
+
     if (line[my_strlen(line) - 1] == '\n')
         line[my_strlen(line) - 1] = '\0';
-    if (is_only_space(line) == 1)
+    if (line[0] == '\0')
         return;
-    if (my_strcmp(line, "") == 0)
-        return;
-    *ret = my_shell(line, my_env, last_status);
+    ret = new_shell(line, env_list, last_status);
+    if (ret == -42) {
+        free(line);
+        exit(*last_status);
+    }
 }
 
-static int shell_loop(char **my_env, int *last_status)
+int shell_loop(env_t *env_list)
 {
     char *line = NULL;
     size_t len = 0;
-    int ret = 0;
+    int last_status = 0;
 
     while (1) {
-        write(1, "$> ", 3);
-        if (getline(&line, &len, stdin) == -1)
+        if (isatty(0))
+            write(1, "$> ", 4);
+        if (getline(&line, &len, stdin) == -1) {
+            if (isatty(0))
+                write(1, "exit\n", 6);
             break;
-        process_line(line, &my_env, last_status, &ret);
-        if (ret == -42 || ret == 84)
-            break;
+        }
+        handle_line(line, &env_list, &last_status);
     }
     free(line);
-    return ret;
+    return last_status;
 }
 
 int main(int ac, char **av, char **env)
 {
-    int last_status = 0;
-    int ret_nb = 0;
-    char **my_env = init_new_env(env);
+    env_t *env_list = NULL;
+    int status = 0;
 
     if (ac != 1)
         return 84;
-    ret_nb = shell_loop(my_env, &last_status);
-    free_list(my_env);
-    if (ret_nb == 84)
-        return 84;
-    return last_status;
+    env_list = init_env_list(env);
+    status = shell_loop(env_list);
+    free_env_list(env_list);
+    return status;
 }

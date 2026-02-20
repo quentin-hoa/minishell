@@ -20,6 +20,10 @@
     #include <dirent.h>
     #include <sys/wait.h>
     #include <fcntl.h>
+    #include <errno.h>
+    #define NB_BUILTIN 4
+    #define TRUE 1
+    #define FALSE 0
 
 int my_printf(char *format, ...);
 char **word_separator_space(char const *str);
@@ -50,5 +54,35 @@ void shift_values(char **env, int j);
 int count_lines_env(char **env);
 char *get_exe_path(char **env, char *command);
 int is_only_space(char *line);
+char *my_strndup(char const *src, int n);
+char *my_strchr(char const *str, int c);
+int find_slash(char *command);
+char **my_str_to_word_array_delim(char const *str, char delim);
+int my_str_isnum(char *str);
+
+typedef struct env_s {
+    char *key;
+    char *val;
+    struct env_s *next;
+    struct env_s *prev;
+} env_t;
+
+env_t *init_env_list(char **env);
+void print_env(env_t *head);
+
+typedef struct builtin_s {
+    char *key;
+    int (*func)(env_t **head, char **args, int *last_status);
+} builtin_t;
+
+int exit_funct( env_t **head, char **args, int *last_status);
+void do_unsetenv(env_t **head, char **args, int *last_status);
+int new_shell(char *str, env_t **head, int *last_status);
+int make_chdir(char *cd_path);
+int new_cd(env_t **head, char **args, int *last_status);
+void do_setenv(env_t **head, char **args, int *last_status);
+char **list_to_array(env_t *head);
+char *get_path(char *command, env_t *head);
+void free_env_list(env_t *head);
 
 #endif

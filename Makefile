@@ -12,11 +12,11 @@ CFLAGS = -I$(INCLUDE_PATH) -g -Wall
 NAME = mysh
 
 SRC	= main.c \
-	cd.c \
-	myshell.c \
-	env.c \
+	new_cd.c \
 	utils.c \
-	path.c
+	new_path.c \
+	new_env.c \
+	new_myshell.c \
 
 OBJ = $(SRC:.c=.o)
 
