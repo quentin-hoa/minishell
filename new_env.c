@@ -13,7 +13,7 @@ void print_env(env_t *head)
     env_t *current = head;
 
     while (current) {
-        printf("%s=%s\n", current->key, current->val);
+        my_printf("%s=%s\n", current->key, current->val);
         current = current->next;
     }
 }

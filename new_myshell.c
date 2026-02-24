@@ -91,7 +91,7 @@ static int check_builtins(char **args, env_t **head, int *last_status)
     for (int i = 0; i < NB_BUILTIN; i++) {
         if (my_strcmp(args[0], builtins[i].key) == 0) {
             ret = builtins[i].func(head, args, last_status);
-            return (ret);
+            return ret;
         }
     }
     return -1;
