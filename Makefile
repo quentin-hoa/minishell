@@ -18,7 +18,8 @@ SRC	= main.c \
 	new_env.c \
 	new_myshell.c \
 	unsetenv.c \
-	utils2.c
+	utils2.c \
+	check_val.c
 
 OBJ = $(SRC:.c=.o)
 

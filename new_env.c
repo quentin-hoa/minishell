@@ -79,7 +79,7 @@ env_t *create_new_var(env_t *current, env_t *new_node, char *key, char *val)
 
 void do_setenv(env_t **head, char **args, int *last_status)
 {
-    env_t *new_node;
+    env_t *new_node = NULL;
     env_t *current = *head;
     char *key = args[1];
     char *val = args[2];

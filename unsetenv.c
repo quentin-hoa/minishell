@@ -44,9 +44,6 @@ static void find_and_del(env_t **head, char *key)
 
 void do_unsetenv(env_t **head, char **args, int *last_status)
 {
-    env_t *current = *head;
-    env_t *next_node;
-
     if (!args[0])
         return;
     for (int i = 1; args[i]; i++) {

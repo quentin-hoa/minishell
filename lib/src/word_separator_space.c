@@ -60,7 +60,7 @@ static int get_word_len(char *str)
     return count;
 }
 
-static void more_20_lines(char **word_array, char const *str)
+static void more_20_lines(char **word_array, char *str)
 {
     int word_index = 0;
     int word_len = 0;
@@ -82,7 +82,7 @@ static void more_20_lines(char **word_array, char const *str)
     }
 }
 
-char **word_separator_space(char const *str)
+char **word_separator_space(char *str)
 {
     int nb_words;
     char **word_array;

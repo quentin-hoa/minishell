@@ -13,7 +13,7 @@ void my_put_cd_error(char *path, char *arg)
         write(2, "cd: No home directory.\n", 23);
     else {
         write(2, arg, my_strlen(arg));
-        write(2, ": No such file or directory.\n", 29);
+        write(2, ": Not a directory.\n", 20);
     }
 }
 

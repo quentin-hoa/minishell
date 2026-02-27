@@ -33,12 +33,16 @@ int exit_funct(env_t **head, char **args, int *last_status)
 void my_put_exec_error(char *cmd, int err)
 {
     write(2, cmd, my_strlen(cmd));
-    if (err == ENOEXEC) {
+    if (err == ENOEXEC)
         write(2, ": Exec format error. Wrong Architecture.\n", 41);
-    } else if (err == EACCES) {
+    else if (err == EACCES)
         write(2, ": Permission denied.\n", 21);
-    } else {
+    if (err == ENOENT)
         write(2, ": Command not found.\n", 21);
+    else {
+        write(2, ": ", 2);
+        write(2, strerror(err), my_strlen(strerror(err)));
+        write(2, ".\n", 2);
     }
 }
 

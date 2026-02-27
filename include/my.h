@@ -26,7 +26,7 @@
     #define FALSE 0
 
 int my_printf(char *format, ...);
-char **word_separator_space(char const *str);
+char **word_separator_space(char *str);
 char **my_str_to_word_array(char const *str);
 char *my_strncpy(char *dest, char const *src, int nb);
 char *my_strcpy(char *dest, char const *src);
@@ -84,5 +84,6 @@ void do_setenv(env_t **head, char **args, int *last_status);
 char **list_to_array(env_t *head);
 char *get_path(char *command, env_t *head);
 void free_env_list(env_t *head);
+int check_var(char *key);
 
 #endif
