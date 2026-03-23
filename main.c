@@ -18,7 +18,7 @@ static void handle_line(char *line, env_t **env_list, int *last_status)
         line[my_strlen(line) - 1] = '\0';
     if (line[0] == '\0')
         return;
-    ret = new_shell(line, env_list, last_status);
+    ret = shell(line, env_list, last_status);
     if (ret == -42) {
         free(line);
         exit(*last_status);

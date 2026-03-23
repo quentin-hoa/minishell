@@ -19,7 +19,11 @@ SRC	= main.c \
 	new_myshell.c \
 	unsetenv.c \
 	utils2.c \
-	check_val.c
+	check_val.c \
+	tree.c \
+	run_commands.c \
+	execute_buildin_2.c \
+	build_tree.c \
 
 OBJ = $(SRC:.c=.o)
 
@@ -33,6 +37,7 @@ push: fclean
 	git push
 
 clean:
+	make clean -C ./lib
 	rm -f $(OBJ)
 fclean: clean
 	make fclean -C ./lib

@@ -85,5 +85,32 @@ char **list_to_array(env_t *head);
 char *get_path(char *command, env_t *head);
 void free_env_list(env_t *head);
 int check_var(char *key);
+//---------------minishell 2 --------------------
+
+typedef enum {
+    CMD,
+    PIPE,// |
+    SEMI_COL, // ;
+    REDIR_R,// >
+    REDIR_L,// <
+    APPEND,// >>
+    HEREDOC// <<
+} type_t;
+
+typedef struct treenode_s {
+    char **args;
+    type_t type;
+    struct treenode_s *left;
+    struct treenode_s *right;
+} treenode_t;
+
+treenode_t *build_tree(char *line);
+int run_simple_cmd(char **args, env_t **head, int *last_status);
+int execute_tree(treenode_t *node, env_t **head, int *last_status);
+void free_tree(treenode_t *root);
+int shell(char *str, env_t **head, int *last_status);
+treenode_t *crea_tree_node(char **args, type_t type);
+int execute_pipe(treenode_t *node, env_t **head, int *last_status);
+int execute_redir_r(treenode_t *node, env_t **head, int *last_status);
 
 #endif

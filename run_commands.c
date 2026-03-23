@@ -1,13 +1,13 @@
 /*
 ** EPITECH PROJECT, 2026
-** minishell_1
+** minishell_2
 ** File description:
-** new_myhsell
+** run_commands
 */
 
 #include "my.h"
 
-/*const builtin_t builtins[NB_BUILTIN] = {
+const builtin_t builtins[NB_BUILTIN] = {
     {"exit", (int (*)(env_t **, char **, int *))&exit_funct},
     {"cd", (int (*)(env_t **, char **, int *))&new_cd},
     {"setenv", (int (*)(env_t **, char **, int *))&do_setenv},
@@ -101,12 +101,9 @@ static int check_builtins(char **args, env_t **head, int *last_status)
     return -1;
 }
 
-int new_shell(char *str, env_t **head, int *last_status)
+int run_simple_cmd(char **args, env_t **head, int *last_status)
 {
-    char **args = word_separator_space(str);
     int ret = 0;
-    char *cp_line = strdup(str);
-    treenode_t *root = build_tree(cp_line);
 
     if (!args || !args[0])
         return 0;
@@ -114,26 +111,8 @@ int new_shell(char *str, env_t **head, int *last_status)
     if (ret != -1) {
         if (ret != -42)
             *last_status = ret;
-        free_list(args);
         return ret;
     }
     *last_status = execute_extern_command(args, *head);
-    free_list(args);
     return 0;
-}*/
-
-int shell(char *str, env_t **head, int *last_status)
-{
-    char *cp_line = my_strdup(str);
-    treenode_t *root = build_tree(cp_line);
-    int ret = 0;
-
-    if (!root) {
-        free(cp_line);
-        return 0;
-    }
-    ret = execute_tree(root, head, last_status);
-    free_tree(root);
-    free(cp_line);
-    return ret;
 }

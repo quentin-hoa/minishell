@@ -52,3 +52,14 @@ void free_env_list(env_t *head)
         free(tmp);
     }
 }
+
+void free_tree(treenode_t *root)
+{
+    if (!root)
+        return;
+    free_tree(root->left);
+    free_tree(root->right);
+    if (root->args)
+        free_list(root->args);
+    free(root);
+}
