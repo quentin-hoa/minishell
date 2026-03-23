@@ -24,6 +24,7 @@ SRC	= main.c \
 	run_commands.c \
 	execute_buildin_2.c \
 	build_tree.c \
+	init_env.c
 
 OBJ = $(SRC:.c=.o)
 

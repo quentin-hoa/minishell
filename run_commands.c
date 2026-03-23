@@ -8,10 +8,10 @@
 #include "my.h"
 
 const builtin_t builtins[NB_BUILTIN] = {
-    {"exit", (int (*)(env_t **, char **, int *))&exit_funct},
-    {"cd", (int (*)(env_t **, char **, int *))&new_cd},
-    {"setenv", (int (*)(env_t **, char **, int *))&do_setenv},
-    {"unsetenv", (int (*)(env_t **, char **, int *))&do_unsetenv}
+    {"exit", &exit_funct},
+    {"cd", &new_cd},
+    {"setenv", &do_setenv},
+    {"unsetenv", &do_unsetenv}
 };
 
 int exit_funct(env_t **head, char **args, int *last_status)

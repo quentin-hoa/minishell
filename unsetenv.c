@@ -29,24 +29,31 @@ void del_node(env_t **head, env_t *node)
     free_node(node);
 }
 
-static void find_and_del(env_t **head, char *key)
+static int find_and_del(env_t **head, char *key)
 {
     env_t *current = *head;
 
     while (current) {
         if (my_strcmp(current->key, key) == 0) {
             del_node(head, current);
-            return;
+            return 0;
         }
         current = current->next;
     }
+    return -84;
 }
 
-void do_unsetenv(env_t **head, char **args, int *last_status)
+int do_unsetenv(env_t **head, char **args, int *last_status)
 {
-    if (!args[0])
-        return;
-    for (int i = 1; args[i]; i++) {
-        find_and_del(head, args[i]);
+    if (!args[1]) {
+        write(2, "unsetenv: Too few arguments.\n", 29);
+        return 1;
     }
+    for (int i = 1; args[i]; i++) {
+        if (find_and_del(head, args[i]) == -84) {
+            *last_status = 1;
+            return 1;
+        }
+    }
+    return 0;
 }

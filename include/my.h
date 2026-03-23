@@ -76,11 +76,11 @@ typedef struct builtin_s {
 } builtin_t;
 
 int exit_funct(env_t **head, char **args, int *last_status);
-void do_unsetenv(env_t **head, char **args, int *last_status);
+int do_unsetenv(env_t **head, char **args, int *last_status);
 int new_shell(char *str, env_t **head, int *last_status);
 int make_chdir(char *cd_path);
 int new_cd(env_t **head, char **args, int *last_status);
-void do_setenv(env_t **head, char **args, int *last_status);
+int do_setenv(env_t **head, char **args, int *last_status);
 char **list_to_array(env_t *head);
 char *get_path(char *command, env_t *head);
 void free_env_list(env_t *head);
