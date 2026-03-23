@@ -33,8 +33,8 @@ int execute_tree(treenode_t *node, env_t **head, int *last_status)
     if (node->type == PIPE) {
         return execute_pipe(node, head, last_status);
     }
-    if (node->type == REDIR_R) {
-        return execute_redir_r(node, head, last_status);
+    if (node->type == REDIR_R || node->type == APPEND) {
+        return execute_redir(node, head, last_status);
     }
     if (node->type == CMD) {
         return run_simple_cmd(node->args, head, last_status);
