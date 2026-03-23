@@ -7,7 +7,7 @@
 
 #include "my.h"
 
-treenode_t *check_semi(char *line, treenode_t *node)
+static treenode_t *check_semi(char *line, treenode_t *node)
 {
     char *separator = my_strchr(line, ';');
 
@@ -21,7 +21,7 @@ treenode_t *check_semi(char *line, treenode_t *node)
     return NULL;
 }
 
-treenode_t *check_pipe(char *line, treenode_t *node)
+static treenode_t *check_pipe(char *line, treenode_t *node)
 {
     char *separator = my_strchr(line, '|');
 
@@ -35,7 +35,7 @@ treenode_t *check_pipe(char *line, treenode_t *node)
     return NULL;
 }
 
-treenode_t *check_re_r(char *line, treenode_t *node)
+static treenode_t *check_re_r(char *line, treenode_t *node)
 {
     char *separator = my_strchr(line, '>');
 
@@ -56,9 +56,30 @@ treenode_t *check_re_r(char *line, treenode_t *node)
     return NULL;
 }
 
+static treenode_t *check_re_l(char *line, treenode_t *node)
+{
+    char *separator = my_strchr(line, '<');
+
+    if (separator != NULL) {
+        if (*(separator + 1) == '<') {
+            *separator = '\0';
+            node = crea_tree_node(NULL, HEREDOC);
+            node->left = build_tree(line);
+            node->right = build_tree(separator + 2);
+        } else {
+            *separator = '\0';
+            node = crea_tree_node(NULL, REDIR_L);
+            node->left = build_tree(line);
+            node->right = build_tree(separator + 1);
+        }
+        return node;
+    }
+    return NULL;
+}
+
 treenode_t *build_tree(char *line)
 {
-    treenode_t *node;
+    treenode_t *node = NULL;
 
     node = check_semi(line, node);
     if (node)
@@ -67,6 +88,9 @@ treenode_t *build_tree(char *line)
     if (node)
         return node;
     node = check_re_r(line, node);
+    if (node)
+        return node;
+    node = check_re_l(line, node);
     if (node)
         return node;
     return crea_tree_node(word_separator_space(line), CMD);
