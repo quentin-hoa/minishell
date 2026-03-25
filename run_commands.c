@@ -6,6 +6,7 @@
 */
 
 #include "my.h"
+#include <unistd.h>
 
 const builtin_t builtins[NB_BUILTIN] = {
     {"exit", &exit_funct},
@@ -41,7 +42,7 @@ void my_put_exec_error(char *cmd, int err)
         write(2, ": Command not found.\n", 21);
     else {
         write(2, ": ", 2);
-        write(2, strerror(err), my_strlen(strerror(err)));
+        my_printf("%s", strerror(err));
         write(2, ".\n", 2);
     }
 }
@@ -64,27 +65,47 @@ void handle_error_status(int status, int *last_status)
     }
 }
 
-int execute_extern_command(char **args, env_t *head)
+static void do_exec(char **args, char **env_tab, char *path, int *last_status)
+{
+    if (execve(path, args, env_tab) == -1) {
+        my_put_exec_error(args[0], errno);
+        *last_status = 1;
+        exit(1);
+    }
+}
+
+static void free_end(char ***env_table, char **path)
+{
+    free_list(*env_table);
+    free(*path);
+}
+
+static void call_error_exec(int *last_status, int status, pid_t pid)
+{
+    waitpid(pid, &status, 0);
+    handle_error_status(status, last_status);
+}
+
+int execute_extern_command(char **args, env_t *head, int *last_status)
 {
     char **env_tab = list_to_array(head);
     char *path = get_path(args[0], head);
-    pid_t pid = fork();
+    pid_t pid;
     int status = 0;
 
+    if (!path) {
+        write(2, args[0], my_strlen(args[0]));
+        write(2, ": Command not found.\n", 22);
+        return 1;
+    }
+    pid = fork();
     if (pid == -1)
         return 1;
-    if (pid == 0) {
-        if (execve(path, args, env_tab) == -1) {
-            my_put_exec_error(args[0], errno);
-            exit(1);
-        }
-    } else {
-        waitpid(pid, &status, 0);
-        handle_error_status(status, &status);
-    }
-    free_list(env_tab);
-    if (path)
-        free(path);
+    if (pid == 0)
+        do_exec(args, env_tab, path, last_status);
+    else
+        call_error_exec(last_status, status, pid);
+    free_end(&env_tab, &path);
     return status;
 }
 
@@ -113,6 +134,6 @@ int run_simple_cmd(char **args, env_t **head, int *last_status)
             *last_status = ret;
         return ret;
     }
-    *last_status = execute_extern_command(args, *head);
+    *last_status = execute_extern_command(args, *head, last_status);
     return 0;
 }

@@ -42,9 +42,45 @@ int execute_redir_r(treenode_t *node, env_t **head, int *last_status)
     return ret;
 }
 
+static void do_fork_left(int pipefd[], treenode_t *node,
+    env_t **head, int *last_status)
+{
+    close(pipefd[0]);
+    dup2(pipefd[1], 1);
+    close(pipefd[1]);
+    exit(execute_tree(node->left, head, last_status));
+}
+
+static void do_fork_right(int pipefd[], treenode_t *node,
+    env_t **head, int *last_status)
+{
+    close(pipefd[1]);
+    dup2(pipefd[0], 0);
+    close(pipefd[0]);
+    exit(execute_tree(node->right, head, last_status));
+}
+
 int execute_pipe(treenode_t *node, env_t **head, int *last_status)
 {
-    return 0;
+    int pipefd[2];
+    pid_t pid_left;
+    pid_t pid_right;
+    int status;
+
+    if (pipe(pipefd) == -1)
+        return 1;
+    pid_left = fork();
+    if (pid_left == 0)
+        do_fork_left(pipefd, node, head, last_status);
+    pid_right = fork();
+    if (pid_right == 0)
+        do_fork_right(pipefd, node, head, last_status);
+    close(pipefd[0]);
+    close(pipefd[1]);
+    waitpid(pid_left, &status, 0);
+    waitpid(pid_right, &status, 0);
+    handle_error_status(status, last_status);
+    return *last_status;
 }
 
 int write_heredoc_to_file(treenode_t *node)
@@ -57,7 +93,7 @@ int write_heredoc_to_file(treenode_t *node)
     if (fd == -1 || !delimiter)
         return -84;
     while (isatty(0)) {
-        write(1, "? ", 3);
+        write(1, "? ", 2);
         if (getline(&line, &len, stdin) == -1)
             break;
         if (line[my_strlen(line) - 1] == '\n')

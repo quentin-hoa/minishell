@@ -6,6 +6,7 @@
 */
 
 #include "my.h"
+#include <string.h>
 
 char *build_path(char *dir, char *command)
 {
