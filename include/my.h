@@ -115,4 +115,14 @@ int execute_redir_r(treenode_t *node, env_t **head, int *last_status);
 int execute_redir_l(treenode_t *node, env_t **head, int *last_status);
 void handle_error_status(int status, int *last_status);
 
+typedef struct errors_s {
+    int code;
+    char *msg;
+} errors_t;
+
+typedef struct cd_error_s {
+    int code;
+    char *msg;
+} cd_error_t;
+
 #endif

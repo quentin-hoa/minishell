@@ -15,6 +15,13 @@ const builtin_t builtins[NB_BUILTIN] = {
     {"unsetenv", &do_unsetenv}
 };
 
+const errors_t errors[] = {
+    {ENOEXEC, ": Exec format error. Wrong Architecture.\n"},
+    {EACCES, ": Permission denied.\n"},
+    {ENOENT, ": Command not found.\n"},
+    {EISDIR, ": Is a directory.\n"}
+};
+
 int exit_funct(env_t **head, char **args, int *last_status)
 {
     if (isatty(0))
@@ -34,17 +41,15 @@ int exit_funct(env_t **head, char **args, int *last_status)
 void my_put_exec_error(char *cmd, int err)
 {
     write(2, cmd, my_strlen(cmd));
-    if (err == ENOEXEC)
-        write(2, ": Exec format error. Wrong Architecture.\n", 41);
-    else if (err == EACCES)
-        write(2, ": Permission denied.\n", 21);
-    if (err == ENOENT)
-        write(2, ": Command not found.\n", 21);
-    else {
-        write(2, ": ", 2);
-        my_printf("%s", strerror(err));
-        write(2, ".\n", 2);
+    for (int i = 0; i < 4; i++) {
+        if (err == errors[i].code) {
+            write(2, errors[i].msg, my_strlen(errors[i].msg));
+            return;
+        }
     }
+    write(2, ": ", 2);
+    write(2, strerror(err), my_strlen(strerror(err)));
+    write(2, ".\n", 2);
 }
 
 static void check_signals(int status)

@@ -61,8 +61,8 @@ char *get_path(char *command, env_t *head)
         return NULL;
     }
     path_env = get_path_from_list(head);
-    if (!path_env)
-        return NULL;
+    if (!path_env || path_env[0] != '/')
+        path_env = my_strdup("/bin:/usr/bin");
     dirs = my_str_to_word_array_delim(path_env, ':');
     res = search_path(dirs, command, path_env);
     if (res)
