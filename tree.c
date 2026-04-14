@@ -27,7 +27,7 @@ int execute_tree(treenode_t *node, env_t **head, int *last_status)
     if (!node)
         return 0;
     if (node->type == SEMI_COL) {
-            execute_tree(node->left, head, last_status);
+        execute_tree(node->left, head, last_status);
         return execute_tree(node->right, head, last_status);
     }
     if (node->type == PIPE)

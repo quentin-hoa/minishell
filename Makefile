@@ -14,9 +14,9 @@ NAME = mysh
 SRC	= main.c \
 	new_cd.c \
 	utils.c \
-	new_path.c \
-	new_env.c \
-	new_myshell.c \
+	path.c \
+	env.c \
+	myshell.c \
 	unsetenv.c \
 	utils2.c \
 	check_val.c \

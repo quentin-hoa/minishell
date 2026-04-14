@@ -50,8 +50,8 @@ static int check_env_error(char *key)
     }
     for (int i = 0; key[i]; i++) {
         if (!((key[i] >= 'a' && key[i] <= 'z') ||
-            (key[i] >= 'A' && key[i] <= 'Z') ||
-            (key[i] >= '0' && key[i] <= '9') || (key[i] == '_'))) {
+                (key[i] >= 'A' && key[i] <= 'Z') ||
+                (key[i] >= '0' && key[i] <= '9') || (key[i] == '_'))) {
             write(2, error, 60);
             return 1;
         }
