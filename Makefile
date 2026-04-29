@@ -11,26 +11,26 @@ CFLAGS = -I$(INCLUDE_PATH) -g -Wall
 
 NAME = mysh
 
-SRC	= main.c \
-	new_cd.c \
-	utils.c \
-	path.c \
-	env.c \
-	myshell.c \
-	unsetenv.c \
-	utils2.c \
-	check_val.c \
-	tree.c \
-	run_commands.c \
-	execute_buildin_2.c \
-	build_tree.c \
-	init_env.c
+SRC	= src/main.c \
+	src/new_cd.c \
+	src/utils.c \
+	src/path.c \
+	src/env.c \
+	src/myshell.c \
+	src/unsetenv.c \
+	src/utils2.c \
+	src/check_val.c \
+	src/tree.c \
+	src/run_commands.c \
+	src/execute_buildin_2.c \
+	src/build_tree.c \
+	src/init_env.c
 
 OBJ = $(SRC:.c=.o)
 
 all: $(OBJ)
 	make -C ./lib
-	clang *.o -o $(NAME)  -L./lib -lmy
+	clang $(OBJ) -o $(NAME)  -L./lib -lmy
 
 push: fclean
 	git add .
